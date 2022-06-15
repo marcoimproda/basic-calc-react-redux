@@ -1,0 +1,10 @@
+export const CLEAR = 'CLEAR';
+export const ADD = 'ADD';
+export const SUBTRACT = 'SUBTRACT';
+export const DIVIDE = 'DIVIDE';
+export const MULTIPLY = 'MULTIPLY';
+export const EQUAL = 'EQUAL';
+export const DECIMAL = 'DECIMAL';
+export const DIGIT = 'DIGIT';
+export const CANCEL = 'CANCEL';
+export const ERASEHISTORY = 'ERASE_HISTORY';
