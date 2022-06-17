@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux"
 import { bindActionCreators } from "redux"
-import { actionCreators } from "../../store/index"
+import { actionCreators } from "../../store/calculator/index";
 import { RootContainer, Container, Screens } from './calculator.style';
 import { History, Backspace, Delete } from '@mui/icons-material';
 import Button from "../button/button"

@@ -1,37 +1,35 @@
 import { legacy_createStore as createStore, applyMiddleware, compose } from "redux";
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import logger from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
-import { reducers } from "./reducers/index";
 
-// convert object to string and store in localStorage
-function saveToLocalStorage(state) {
-    try {
-      const serialisedState = JSON.stringify(state);
-      localStorage.setItem("persistantState", serialisedState);
-    } catch (e) {
-      console.warn(e);
-    }
-  }
+import { rootReducer } from "./root-reducer";
+import {localStorageMiddleware, reHydrateStore} from './middleware/localStorage';
 
-  // load string from localStarage and convert into an Object
-// invalid output must be undefined
-function loadFromLocalStorage() {
-    try {
-      const serialisedState = localStorage.getItem("persistantState");
-      if (serialisedState === null) return undefined;
-      return JSON.parse(serialisedState);
-    } catch (e) {
-      console.warn(e);
-      return undefined;
-    }
-  }
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: [],
+};
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 const sagaMiddleware = createSagaMiddleware();
 
-export const store = createStore(reducers, loadFromLocalStorage(), composeEnhancers(applyMiddleware(sagaMiddleware)));
 
-// listen for store changes and use saveToLocalStorage to
-// save them to localStorage
-store.subscribe(() => saveToLocalStorage(store.getState()));
+const composeEnhancer =
+  (process.env.NODE_ENV !== 'production' &&
+    window &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+  compose;
+  const middleWares = [
+    process.env.NODE_ENV !== 'production' && logger,
+    sagaMiddleware,
+  ].filter(Boolean);
+const composedEnhancers = composeEnhancer(applyMiddleware(...middleWares, localStorageMiddleware));
 
-export default store;
+export const store = createStore(persistedReducer,
+  reHydrateStore(),
+  composedEnhancers);
+
+export const persistor = persistStore(store);

@@ -1,5 +1,5 @@
 import { evaluate } from "mathjs";
-import * as types from '../types';
+import * as types from './calculator.types';
 
 // Define default state
 const defaultState = {
@@ -7,12 +7,12 @@ const defaultState = {
     formula: '',
     operation: '',
     history: [],
-}
+};
 
 // Define operations
 const operations = ['+', '-', '/', '*', '.'];
 
-const reducer = (state = defaultState, action) => {
+export const calculatorReducer = (state = defaultState, action) => {
     switch(action.type) {
         case types.CLEAR:
             return {
@@ -123,6 +123,6 @@ const reducer = (state = defaultState, action) => {
         default:
         return state
     }
-}
+};
 
-export default reducer;
+export default calculatorReducer;
